@@ -1,13 +1,14 @@
 import heapq
 import random
 
+# Constants for game elements
 RABBIT = 'r'
 BIG_RABBIT = 'R'
 CARROT = 'c'
 RABBIT_HOLE = 'O'
 PATHWAY_STONE = '-'
 
-
+# Constants for movement keys
 MOVE_LEFT = 'a'
 MOVE_RIGHT = 'd'
 MOVE_UP = 'w'
@@ -16,16 +17,16 @@ PICK_CARROT = 'p'
 JUMP = 'j'
 QUIT = 'q'
 
-
+# Initialize the game board
 def initialize_board(size, num_carrots, num_holes):
     board = [['-' for _ in range(size)] for _ in range(size)]
 
-    
+    # Place rabbit
     rabbit_row = random.randint(0, size - 1)
     rabbit_col = random.randint(0, size - 1)
     board[rabbit_row][rabbit_col] = RABBIT
 
-    
+    # Place rabbit holes
     for _ in range(num_holes):
         hole_row = random.randint(0, size - 1)
         hole_col = random.randint(0, size - 1)
@@ -34,7 +35,7 @@ def initialize_board(size, num_carrots, num_holes):
             hole_col = random.randint(0, size - 1)
         board[hole_row][hole_col] = RABBIT_HOLE
 
-    
+    # Place carrots
     for _ in range(num_carrots):
         carrot_row = random.randint(0, size - 1)
         carrot_col = random.randint(0, size - 1)
@@ -45,18 +46,18 @@ def initialize_board(size, num_carrots, num_holes):
 
     return board, (rabbit_row, rabbit_col)
 
-
+# Print the game board
 def print_board(board):
     for row in board:
         print(' '.join(row))
 
-
+# Check if a move is valid
 def is_valid_move(board, row, col):
     if 0 <= row < len(board) and 0 <= col < len(board[0]):
         return True
     return False
 
-
+# Check if the rabbit can pick up a carrot
 def can_pick_carrot(board, rabbit_row, rabbit_col):
     adjacent_positions = [
         (rabbit_row - 1, rabbit_col),
@@ -70,7 +71,7 @@ def can_pick_carrot(board, rabbit_row, rabbit_col):
             return True
     return False
 
-
+# Check if the rabbit can jump over a rabbit hole
 def can_jump(board, rabbit_row, rabbit_col):
     adjacent_positions = [
         (rabbit_row - 1, rabbit_col),
@@ -84,16 +85,16 @@ def can_jump(board, rabbit_row, rabbit_col):
             return True
     return False
 
-
+# Check if the rabbit has won the game
 def has_won(board, rabbit_row, rabbit_col):
     return board[rabbit_row][rabbit_col] == RABBIT_HOLE
 
-
+# Implement the A* search algorithm
 def astar_search(board, start, end):
     def heuristic(node):
         x, y = node
         end_x, end_y = end
-        return abs(x - end_x) + abs(y - end_y)  
+        return abs(x - end_x) + abs(y - end_y)  # Manhattan distance heuristic
 
     open_list = []
     heapq.heappush(open_list, (0, start))
@@ -174,7 +175,7 @@ def play_game():
             elif board[new_pos[0]][new_pos[1]] == RABBIT_HOLE and holding_carrot:
                 board[new_pos[0]][new_pos[1]] = PATHWAY_STONE
                 holding_carrot = False
-                num_holes -= 1  
+                num_holes -= 1  # Decrease the number of remaining holes
                 print_board(board)
                 if num_holes == 0:
                     print("Congratulations! Mr. Bunny safely returned to his rabbit hole with the carrot!")
